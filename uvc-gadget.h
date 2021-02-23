@@ -1,6 +1,8 @@
 /*
  *	uvc_gadget.h  --  USB Video Class Gadget driver
  *
+ *  Modified by Matthias Deeg (mdeeg)
+ *
  *	Copyright (C) 2009-2010
  *	    Laurent Pinchart (laurent.pinchart@ideasonboard.com)
  *
@@ -109,7 +111,7 @@ enum stream_control_action {
 /* Buffer representing one video frame */
 struct buffer {
     struct v4l2_buffer buf;
-    void * start;
+    void *start;
     size_t length;
 };
 
@@ -122,7 +124,7 @@ struct uvc_frame_format {
 
     enum usb_device_speed usb_speed;
     int video_format;
-    const char * format_name;
+    const char *format_name;
 
     unsigned int bFormatIndex;
     unsigned int bFrameIndex;
@@ -162,21 +164,20 @@ bool uvc_shutdown_requested = false;
 /* device type */
 enum device_type {
     DEVICE_TYPE_UVC,
-    DEVICE_TYPE_V4L2,
-    DEVICE_TYPE_FRAMEBUFFER,
+    DEVICE_TYPE_IMAGE
 };
 
 /* Represents a V4L2 based video capture device */
 struct v4l2_device {
     enum device_type device_type;
-    const char * device_type_name;
+    const char *device_type_name;
 
     /* v4l2 device specific */
     int fd;
     int is_streaming;
 
     /* v4l2 buffer specific */
-    struct buffer * mem;
+    struct buffer *mem;
     unsigned int nbufs;
     unsigned int buffer_type;
     unsigned int memory_type;
@@ -185,7 +186,7 @@ struct v4l2_device {
     unsigned long long int qbuf_count;
     unsigned long long int dqbuf_count;
 
-    /* uvc specific */
+    /* UVC specific */
     int run_standalone;
     int control;
     struct uvc_streaming_control probe;
@@ -197,37 +198,40 @@ struct v4l2_device {
     /* uvc specific flags */
     int uvc_shutdown_requested;
 
-    struct buffer * dummy_buf;
+    struct buffer *dummy_buf;
 
-    /* fb specific */
-    unsigned int fb_screen_size;
-    unsigned int fb_mem_size;
-    unsigned int fb_width;
-    unsigned int fb_height;
-    unsigned int fb_bpp;
-    unsigned int fb_line_length;
-    void * fb_memory;
+    /* Image specific */
+    unsigned int image_size;
+    unsigned int image_uncompressed_mem_size;
+    unsigned int image_mjpeg_mem_size;
+    unsigned int image_l8_mem_size;
+    unsigned int image_mem_size;
+    unsigned int image_width;
+    unsigned int image_height;
+    unsigned int image_format;
+    void *image_memory;
+    void *image_uncompressed_memory;
+    void *image_mjpeg_memory;
+    void *image_l8_memory;
 
     double last_time_video_process;
     int buffers_processed;
 };
 
-static struct v4l2_device v4l2_dev;
 static struct v4l2_device uvc_dev;
-static struct v4l2_device fb_dev;
+static struct v4l2_device image_dev;
 
 struct uvc_settings {
-    char * uvc_devname;
-    char * v4l2_devname;
-    char * fb_devname;
+    char *uvc_devname;
+    char *v4l2_devname;
+    char *image_name;
     enum device_type source_device;
     unsigned int nbufs;
     bool show_fps;
-    bool fb_grayscale;
-    unsigned int fb_framerate;
+    unsigned int image_framerate;
     bool streaming_status_onboard;
     bool streaming_status_onboard_enabled;
-    char * streaming_status_pin;
+    char *streaming_status_pin;
     bool streaming_status_enabled;
     unsigned int blink_on_startup;
 };
@@ -235,10 +239,9 @@ struct uvc_settings {
 struct uvc_settings settings = {
     .uvc_devname = "/dev/video1",
     .v4l2_devname = "/dev/video0",
-    .source_device = DEVICE_TYPE_V4L2,
+    .source_device = DEVICE_TYPE_IMAGE,
     .nbufs = 2,
-    .fb_framerate = 25,
-    .fb_grayscale = false,
+    .image_framerate = 25,
     .show_fps = false,
     .streaming_status_onboard = false,
     .streaming_status_onboard_enabled = false,
@@ -249,7 +252,7 @@ struct uvc_settings settings = {
 struct control_mapping_pair {
     unsigned int type;
     unsigned int uvc;
-    const char * uvc_name;
+    const char *uvc_name;
     unsigned int v4l2;
     const char * v4l2_name;
     bool enabled;
@@ -484,7 +487,7 @@ struct control_mapping_pair control_mapping[] = {
 	}
 };
 
-int control_mapping_size = sizeof(control_mapping) / sizeof(* control_mapping);
+int control_mapping_size = sizeof(control_mapping) / sizeof(*control_mapping);
 
 /*
  * RGB to YUYV conversion 
@@ -586,7 +589,7 @@ unsigned int mult_18[256] = {128, 146, 164, 182, 200, 218, 236, 254, 272, 290, 3
     4520, 4538, 4556, 4574, 4592, 4610, 4628, 4646, 4664, 4682, 4700, 4718
 };
 
-#define rgb2yvyu(r1, g1, b1, r2, g2, b2)                                                 \
+#define rgb2yvyu(b1, g1, r1, b2, g2, r2)                                                 \
     ({                                                                                   \
         uint8_t r12 = (r1 + r2) >> 1;                                                    \
         uint8_t g12 = (g1 + g2) >> 1;                                                    \
