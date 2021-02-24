@@ -49,3 +49,8 @@ Then, the UVC gadget can be started with suitable parameters, for example
 ```
 ./uvc-gadget -i images/hello_robot_640x480.png -u /dev/video0
 ```
+
+# Disclaimer
+
+Use at your own risk. Do not use without full consent of everyone involved.
+For educational purposes only.
