@@ -14,6 +14,22 @@ Subface Camera is an experimental UVC gadget based on the following uvc-gadget v
 
 # Installation
 
+Set **dwc2** (DesignWare Core 2) as device tree overlay by adding the following line at the end of the file */boot/config.txt*.
+
+```
+dtoverlay=dwc2
+```
+
+Load **dwc2** and **libcomposite** during boot by adding the following line
+
+```
+modules-load=dwc2,libcomposite
+```
+
+after **rootwait** in the file */boot/cmdline.txt*.
+
+Build the UVC gadget via make:
+
 ```
 git clone https://github.com/mdeeg/uvc-gadget-subface
 cd uvc-gadget-subface
