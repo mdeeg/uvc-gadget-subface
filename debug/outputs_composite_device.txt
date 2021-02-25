@@ -1,0 +1,90 @@
+kernel log messages when connecting the USB composite device
+
+[34081.123878] usb 1-1: new high-speed USB device number 25 using xhci_hcd
+[34081.264503] usb 1-1: New USB device found, idVendor=1d6b, idProduct=0104, bcdDevice= 1.00
+[34081.264505] usb 1-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[34081.264506] usb 1-1: Product: Subface Camera
+[34081.264507] usb 1-1: Manufacturer: Subface
+[34081.264508] usb 1-1: SerialNumber: 202102190001
+[34081.266836] uvcvideo: Found UVC 1.00 device Subface Camera (1d6b:0104)
+[34081.273376] uvcvideo: Failed to query (GET_INFO) UVC control 2 on unit 1: -32 (exp. 1).
+[34081.279907] uvcvideo: Failed to query (GET_INFO) UVC control 2 on unit 2: -32 (exp. 1).
+[34081.293579] input: Subface Camera: UVC Camera as /devices/pci0000:00/0000:00:14.0/usb1/1-1/1-1:1.0/input/input30
+[34081.294009] uvcvideo: Found UVC 1.00 device Subface Camera (1d6b:0104)
+[34081.294842] uvcvideo: Failed to query (GET_INFO) UVC control 2 on unit 1: -32 (exp. 1).
+[34081.297702] uvcvideo: Failed to query (GET_INFO) UVC control 2 on unit 2: -32 (exp. 1).
+[34081.300363] uvcvideo: UVC non compliance - GET_DEF(PROBE) not supported. Enabling workaround.
+[34081.301657] uvcvideo: Failed to query (129) UVC probe control : -32 (exp. 26).
+[34081.301658] uvcvideo: Failed to initialize the device (-5).
+
+--------------------------------------------------------------------------------
+
+uvc-gadget output for RGB camera (/dev/video0)
+
+$ ./uvc-gadget -i images/hello_robot_640x480.png -u /dev/video0 
+CONFIGFS: Initial path: /sys/kernel/config/usb_gadget
+CONFIGFS: UVC: format: 1, frame: 1, resolution: 480x480, frame_interval: 333333,  bitrate: [18432000, 36864000]
+CONFIGFS: UVC: format: 1, frame: 1, resolution: 640x480, frame_interval: 333333,  bitrate: [24576000, 49152000]
+CONFIGFS: STREAMING maxburst:  0
+CONFIGFS: STREAMING maxpacket: 2048
+CONFIGFS: STREAMING interval:  1
+SETTINGS: Number of buffers requested: 2
+SETTINGS: Show FPS: DISABLED
+SETTINGS: GPIO pin for streaming status: not set
+SETTINGS: Onboard led0 used for streaming status: DISABLED
+SETTINGS: Blink on startup: 0 times
+SETTINGS: UVC device name: /dev/video0
+SETTINGS: IMAGE device source: images/hello_robot_640x480.png
+DEVICE_UVC: Opening /dev/video0 device
+DEVICE_UVC: Device is 20980000.usb on bus gadget
+UVC: Streaming control: action: INIT
+FRAME: format: 1, frame: 1, resolution: 480x480, frame_interval: 333333,  bitrate: [18432000, 36864000]
+DUMP: uvc_streaming_control: format: 1, frame: 1, frame interval: 333333
+UVC: Streaming control: action: INIT
+FRAME: format: 1, frame: 1, resolution: 480x480, frame_interval: 333333,  bitrate: [18432000, 36864000]
+DUMP: uvc_streaming_control: format: 1, frame: 1, frame interval: 333333
+PROCESSING LOOP: IMAGE -> UVC
+DEVICE_UVC: UVC_EVENT_CONNECT
+UVC: INPUT_TERMINAL - GET_INFO - UVC_CT_AE_MODE_CONTROL - DISABLED
+UVC: PROCESSING_UNIT - GET_INFO - UVC_PU_BRIGHTNESS_CONTROL - DISABLED
+UVC: Streaming request CS: PROBE, REQ: GET_DEF
+UVC: Streaming control: action: GET MIN
+FRAME: format: 1, frame: 1, resolution: 480x480, frame_interval: 333333,  bitrate: [18432000, 36864000]
+DUMP: uvc_streaming_control: format: 1, frame: 1, frame interval: 333333
+UVC: Streaming request CS: PROBE, REQ: SET_CUR
+UVC: Control PROBE, length: 26
+UVC: Streaming control: action: SET, format: 1, frame: 1
+FRAME: format: 1, frame: 1, resolution: 480x480, frame_interval: 333333,  bitrate: [18432000, 36864000]
+DUMP: uvc_streaming_control: format: 1, frame: 1, frame interval: 333333
+UVC: Streaming request CS: PROBE, REQ: GET_CUR
+
+--------------------------------------------------------------------------------
+
+uvc-gadget output for IR camera (/dev/video1)
+
+$ ./uvc-gadget -z images/hello_robot.l8 -u /dev/video1
+CONFIGFS: Initial path: /sys/kernel/config/usb_gadget
+CONFIGFS: UVC: format: 1, frame: 1, resolution: 480x480, frame_interval: 333333,  bitrate: [18432000, 36864000]
+CONFIGFS: UVC: format: 1, frame: 1, resolution: 640x480, frame_interval: 333333,  bitrate: [24576000, 49152000]
+CONFIGFS: STREAMING maxburst:  0
+CONFIGFS: STREAMING maxpacket: 2048
+CONFIGFS: STREAMING interval:  1
+SETTINGS: Number of buffers requested: 2
+SETTINGS: Show FPS: DISABLED
+SETTINGS: GPIO pin for streaming status: not set
+SETTINGS: Onboard led0 used for streaming status: DISABLED
+SETTINGS: Blink on startup: 0 times
+SETTINGS: UVC device name: /dev/video1
+SETTINGS: IMAGE device source: images/hello_robot.l8
+DEVICE_UVC: Opening /dev/video1 device
+DEVICE_UVC: Device is 20980000.usb on bus gadget
+UVC: Streaming control: action: INIT
+FRAME: format: 1, frame: 1, resolution: 480x480, frame_interval: 333333,  bitrate: [18432000, 36864000]
+DUMP: uvc_streaming_control: format: 1, frame: 1, frame interval: 333333
+UVC: Streaming control: action: INIT
+FRAME: format: 1, frame: 1, resolution: 480x480, frame_interval: 333333,  bitrate: [18432000, 36864000]
+DUMP: uvc_streaming_control: format: 1, frame: 1, frame interval: 333333
+PROCESSING LOOP: IMAGE -> UVC
+DEVICE_UVC: UVC_EVENT_CONNECT
+
+
